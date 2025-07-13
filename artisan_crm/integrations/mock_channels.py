@@ -105,9 +105,10 @@ class MockMessageConnector:
     
     def simulate_whatsapp_webhook(self, customer_id: int, message: str) -> Dict:
         """Simulate WhatsApp webhook payload"""
+        import os
         return {
             'from': f'+91{random.randint(7000000000, 9999999999)}',
-            'to': '+919876543210',
+            'to': os.environ.get('MOCK_WHATSAPP_NUMBER', '+919876543210'),
             'message': message,
             'timestamp': datetime.now().isoformat(),
             'message_id': f'wamid.{random.randint(100000, 999999)}',
@@ -116,9 +117,10 @@ class MockMessageConnector:
     
     def simulate_email_webhook(self, customer_id: int, subject: str, body: str) -> Dict:
         """Simulate email webhook payload"""
+        import os
         return {
             'from': f'customer{customer_id}@example.com',
-            'to': 'hello@aiotap.com',
+            'to': os.environ.get('MOCK_EMAIL_TO', 'hello@aiotap.com'),
             'subject': subject,
             'body': body,
             'timestamp': datetime.now().isoformat(),

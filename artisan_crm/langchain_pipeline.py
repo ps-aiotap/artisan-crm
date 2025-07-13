@@ -7,7 +7,7 @@ class ArtisanCRMLangChain:
     
     def __init__(self):
         self.openai_api_key = os.environ.get('OPENAI_API_KEY')
-        self.model = "gpt-3.5-turbo"  # Fallback to mock if no API key
+        self.model = os.environ.get('AI_MODEL', 'gpt-3.5-turbo')
     
     def summarize_conversation(self, context: ConversationContext) -> str:
         """Summarize customer conversation history using MCP context"""
