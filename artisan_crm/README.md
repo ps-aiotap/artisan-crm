@@ -40,7 +40,25 @@ A modular, AI-powered CRM system built for both StoreLoop (artisan e-commerce) a
 
 ## Quick Start
 
-### 1. Seed Sample Data
+### 1. Environment Setup
+```bash
+# Copy environment template
+cp .env.example .env
+
+# Edit .env with your configuration
+# Required: DB_PASSWORD, SECRET_KEY, CRM_DB_NAME
+```
+
+### 2. Database Setup
+```bash
+# Create CRM database
+psql -c "CREATE DATABASE artisan_crm;"
+
+# Run migrations
+python manage.py migrate --database=crm_db
+```
+
+### 3. Seed Sample Data
 ```bash
 # For StoreLoop mode (default)
 python manage.py seed_crm_data --customers 10
@@ -49,15 +67,12 @@ python manage.py seed_crm_data --customers 10
 CRM_MODE=AIO python manage.py seed_crm_data --customers 10
 ```
 
-### 2. Generate AI Follow-ups
-```bash
-python manage.py generate_followups --days 7 --limit 20
-```
-
-### 3. Access CRM Interface
+### 4. Access CRM Interface
 - **Customer List**: http://localhost:8000/crm/
 - **Lead Pipeline**: http://localhost:8000/crm/pipeline/
 - **Admin Interface**: http://localhost:8000/admin/
+
+📖 **Detailed Setup**: See [SETUP.md](SETUP.md) for complete configuration guide
 
 ## API Endpoints
 
@@ -74,22 +89,24 @@ python manage.py generate_followups --days 7 --limit 20
 - `GET /crm/pipeline/` - Kanban pipeline view
 - `POST /crm/pipeline/move/` - Move lead between stages
 
-## Mode Configuration
+## Environment Configuration
 
-### Environment Variables
+### Required Variables
 ```bash
-# StoreLoop Mode (default)
-CRM_MODE=STORELOOP
+# Copy template and configure
+cp .env.example .env
 
-# AioTap Mode
-CRM_MODE=AIO
-
-# Database
+# Essential settings
+CRM_MODE=STORELOOP          # or AIO
 CRM_DB_NAME=artisan_crm
+DB_PASSWORD=your-password
+SECRET_KEY=your-secret-key
 
-# AI Integration
+# Optional AI features
 OPENAI_API_KEY=your-openai-key
 ```
+
+⚠️ **Security**: Never commit `.env` to version control
 
 ### Mode-Specific Features
 
