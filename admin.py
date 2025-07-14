@@ -1,5 +1,6 @@
 from django.contrib import admin
 from .models import CustomerProfile, Tag, LeadStage, Interaction, Campaign, Lead
+from .utils.mode_context import get_crm_mode, filter_by_mode
 
 @admin.register(CustomerProfile)
 class CustomerProfileAdmin(admin.ModelAdmin):
@@ -17,6 +18,10 @@ class LeadStageAdmin(admin.ModelAdmin):
     list_display = ['name', 'mode', 'order', 'is_active']
     list_filter = ['mode', 'is_active']
     ordering = ['order']
+    
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return filter_by_mode(qs)
 
 @admin.register(Interaction)
 class InteractionAdmin(admin.ModelAdmin):

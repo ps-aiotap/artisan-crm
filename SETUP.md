@@ -33,7 +33,14 @@ CRM_MODE=STORELOOP
 CRM_MODE=AIO
 ```
 
-### 2. Database Setup
+### 2. Start AT Identity Service
+
+```bash
+# Start AT Identity on port 8001
+python manage.py runserver 8001
+```
+
+### 3. Database Setup
 
 Create CRM database:
 ```sql
@@ -45,7 +52,7 @@ Run migrations:
 python manage.py migrate --database=crm_db
 ```
 
-### 3. Sample Data
+### 4. Sample Data
 
 Seed with test data:
 ```bash
@@ -56,7 +63,7 @@ python manage.py seed_crm_data --customers 10
 CRM_MODE=AIO python manage.py seed_crm_data --customers 10
 ```
 
-### 4. AI Features
+### 5. AI Features
 
 Generate AI follow-ups:
 ```bash
@@ -65,6 +72,7 @@ python manage.py generate_followups --days 7 --limit 20
 
 ## Quick Start URLs
 
+- **Login**: http://localhost:8000/crm/login/
 - **Customer List**: http://localhost:8000/crm/
 - **Lead Pipeline**: http://localhost:8000/crm/pipeline/
 - **Admin**: http://localhost:8000/admin/

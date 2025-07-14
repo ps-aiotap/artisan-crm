@@ -6,15 +6,16 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 
 from ..models import Lead, LeadStage, CustomerProfile
+from ..utils.mode_context import ModeContextMixin, filter_by_mode
 
-class LeadPipelineView(LoginRequiredMixin, TemplateView):
+class LeadPipelineView(LoginRequiredMixin, ModeContextMixin, TemplateView):
     template_name = 'artisan_crm/lead_pipeline.html'
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         
-        # Get stages
-        stages = LeadStage.objects.using('crm_db').filter(is_active=True)
+        # Get stages for current mode
+        stages = filter_by_mode(LeadStage.objects.using('crm_db')).filter(is_active=True)
         
         # Get leads grouped by stage
         pipeline_data = []

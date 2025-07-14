@@ -8,8 +8,11 @@ import json
 from datetime import datetime
 
 from ..models import CustomerProfile, Interaction, Lead, Tag
+from ..utils.mode_context import ModeContextMixin, get_crm_mode, get_mode_config
+from ..langchain_pipeline import crm_ai
+from ..context.context_protocol import ConversationContext, ReplyContext
 
-class CustomerListView(LoginRequiredMixin, ListView):
+class CustomerListView(LoginRequiredMixin, ModeContextMixin, ListView):
     model = CustomerProfile
     template_name = 'artisan_crm/customer_list.html'
     context_object_name = 'customers'
@@ -37,7 +40,7 @@ class CustomerListView(LoginRequiredMixin, ListView):
         context['selected_tag'] = self.request.GET.get('tag', '')
         return context
 
-class CustomerDetailView(LoginRequiredMixin, DetailView):
+class CustomerDetailView(LoginRequiredMixin, ModeContextMixin, DetailView):
     model = CustomerProfile
     template_name = 'artisan_crm/customer_detail.html'
     context_object_name = 'customer'
@@ -73,8 +76,23 @@ def generate_summary(request, customer_id):
     
     customer = get_object_or_404(CustomerProfile.objects.using('crm_db'), pk=customer_id)
     
-    # Simple summary for now
-    summary = f"Customer: {customer.name}, Source: {customer.source}"
+    # Build conversation context
+    interactions = customer.interactions.using('crm_db').order_by('-created_at')[:10]
+    interaction_history = [f"{i.direction}: {i.content}" for i in interactions]
+    
+    tags = [ct.tag.name for ct in customer.customertag_set.using('crm_db').select_related('tag')]
+    
+    context = ConversationContext(
+        customer_name=customer.name,
+        interaction_history=interaction_history,
+        last_contact_date=interactions[0].created_at if interactions else datetime.now(),
+        tags=tags,
+        channel=interactions[0].channel if interactions else 'email',
+        mode=get_crm_mode().lower()
+    )
+    
+    # Generate summary
+    summary = crm_ai.summarize_conversation(context)
     
     # Update customer summary
     customer.summary = summary
@@ -91,8 +109,29 @@ def suggest_reply(request, customer_id):
     data = json.loads(request.body)
     message_text = data.get('message', '')
     
-    # Simple reply suggestion
-    suggested_reply = f"Thank you for your message: {message_text[:50]}..."
+    customer = get_object_or_404(CustomerProfile.objects.using('crm_db'), pk=customer_id)
+    
+    # Build contexts
+    interactions = customer.interactions.using('crm_db').order_by('-created_at')[:5]
+    interaction_history = [f"{i.direction}: {i.content}" for i in interactions]
+    tags = [ct.tag.name for ct in customer.customertag_set.using('crm_db').select_related('tag')]
+    
+    conversation_context = ConversationContext(
+        customer_name=customer.name,
+        interaction_history=interaction_history,
+        last_contact_date=interactions[0].created_at if interactions else datetime.now(),
+        tags=tags,
+        channel=interactions[0].channel if interactions else 'email',
+        mode=get_crm_mode().lower()
+    )
+    
+    reply_context = ReplyContext(
+        message_text=message_text,
+        customer_context=conversation_context
+    )
+    
+    # Generate reply
+    suggested_reply = crm_ai.suggest_reply(reply_context)
     
     return JsonResponse({'reply': suggested_reply})
 

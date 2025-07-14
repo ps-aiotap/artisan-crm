@@ -13,29 +13,17 @@ def custom_404_view(request, exception):
 handler404 = custom_404_view
 
 def home_redirect(request):
-    return redirect('/stores/')
+    return redirect('/crm/')
 
 def debug_partner(request):
     """Direct partner dashboard bypass"""
-    try:
-        from stores.models import Store
-        stores = Store.objects.all()[:5]
-        html = "<h1>Debug Partner Dashboard</h1>"
-        for store in stores:
-            html += f"<p>Store {store.id}: {store.name}</p>"
-        return HttpResponse(html)
-    except Exception as e:
-        return HttpResponse(f"<h1>Debug Error</h1><p>{str(e)}</p>")
+    return HttpResponse("<h1>Debug Partner Dashboard</h1><p>CRM System Active</p>")
 
 urlpatterns = [
     # path('admin/', admin.site.urls),  # Removed for userless system
     path('debug-partner/', debug_partner, name='debug_partner'),
-    path('', include('stores.urls_userless')),
-    path('accounts/', include('stores.urls')),
-    path('stores/', include('stores.urls')),
-    path('products/', include('products.urls')),
-    path('orders/', include('orders.urls')),
-    # path('crm/', include('artisan_crm.urls')),  # Removed for userless system
+
+    path('crm/', include('artisan_crm.urls')),
     path('', home_redirect, name='home'),
 ]
 

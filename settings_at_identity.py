@@ -11,12 +11,6 @@ AT_IDENTITY_URL = os.environ.get('AT_IDENTITY_URL', 'http://localhost:8001/api/'
 AT_IDENTITY_API_KEY = os.environ.get('AT_IDENTITY_API_KEY', 'your-api-key')
 APP_NAME = os.environ.get('APP_NAME', 'artisan_crm')
 
-# Authentication Backends
-AUTHENTICATION_BACKENDS = [
-    'at_identity.auth.backends.ATIdentityBackend',
-    'django.contrib.auth.backends.ModelBackend',  # Fallback
-]
-
 # Middleware
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -24,13 +18,13 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'at_identity.auth.middleware.ATIdentityMiddleware',  # Add this
+    'artisan_crm.middleware.ATIdentityMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
 # Login/Logout URLs
-LOGIN_URL = os.environ.get('LOGIN_URL', '/accounts/login/')
-LOGOUT_URL = os.environ.get('LOGOUT_URL', '/accounts/logout/')
+LOGIN_URL = os.environ.get('LOGIN_URL', '/crm/login/')
+LOGOUT_URL = os.environ.get('LOGOUT_URL', '/crm/logout/')
 LOGIN_REDIRECT_URL = os.environ.get('LOGIN_REDIRECT_URL', '/crm/')
 LOGOUT_REDIRECT_URL = os.environ.get('LOGOUT_REDIRECT_URL', '/')

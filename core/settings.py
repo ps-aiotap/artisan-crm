@@ -22,32 +22,23 @@ DEBUG = os.environ.get("DEBUG", "True").lower() == "true"
 ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
 
 
-# Userless configuration
+# Authentication backends
 AUTHENTICATION_BACKENDS = [
-    "at_identity.auth.backends_userless.UserlessATIdentityBackend",
+    "django.contrib.auth.backends.ModelBackend",
 ]
 
 # Application definition
 INSTALLED_APPS = [
-    # "django.contrib.contenttypes",
-    # "django.contrib.sessions",
-    # "django.contrib.messages",
-    # "django.contrib.staticfiles",
-    # # Third party apps
-    # "tailwind",
-    # "theme",
-    # # Local apps
-    # "products",
-    # "orders",
-    # "stores",
+    "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
-    "crm",
+    "django.contrib.messages",
+    "artisan_crm",
 ]
 
 
 # Userless configuration
-at-identity_URL = 'http://localhost:8001/api/'
+AT_IDENTITY_URL = 'http://localhost:8001/api/'
 
 
 MIDDLEWARE = [
@@ -55,11 +46,10 @@ MIDDLEWARE = [
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
-    "at_identity.auth.middleware.ATIdentityMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "artisan_crm.middleware.ATIdentityMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "stores.middleware.StoreMiddleware",
-    "stores.views.ClearMessagesMiddleware",
 ]
 
 ROOT_URLCONF = "core.urls"
@@ -75,7 +65,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                "stores.context_processors.store_theme",
+
             ],
         },
     },
@@ -216,12 +206,8 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Using Django's default User model for independence
 
-# Userless authentication
-AUTHENTICATION_BACKENDS = [
-    "at_identity.auth.backends_userless.UserlessATIdentityBackend",
-]
 
-AT_IDENTITY_URL = "http://localhost:8001/api/"
+
 APP_NAME = "storeloop"
 
 # Allauth settings
@@ -233,8 +219,8 @@ ACCOUNT_AUTHENTICATION_METHOD = "username_email"
 ACCOUNT_LOGIN_REDIRECT_URL = "/"
 ACCOUNT_LOGOUT_REDIRECT_URL = "/"
 ACCOUNT_SIGNUP_REDIRECT_URL = "/accounts/profile/"
-LOGIN_URL = "/accounts/login/"
-LOGOUT_URL = "/accounts/logout/"
+LOGIN_URL = "/crm/login/"
+LOGOUT_URL = "/crm/logout/"
 
 # Tailwind configuration
 TAILWIND_APP_NAME = "theme"
@@ -251,9 +237,7 @@ RAZORPAY_KEY_ID = os.environ.get("RAZORPAY_KEY_ID", "")
 RAZORPAY_KEY_SECRET = os.environ.get("RAZORPAY_KEY_SECRET", "")
 RAZORPAY_TEST_MODE = True
 
-# Login redirect
-LOGIN_REDIRECT_URL = "/stores/"
-LOGIN_URL = "/accounts/login/"
+
 
 # Additional settings for Indian locale
 USE_L10N = True
