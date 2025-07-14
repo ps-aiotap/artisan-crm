@@ -22,7 +22,7 @@ psql -c "CREATE DATABASE artisan_crm;"
 
 # Run migrations
 python manage.py migrate
-python manage.py migrate --database=crm_db
+python manage.py migrate --database=artisan_crm
 ```
 
 ### 3. Start Server
@@ -40,23 +40,27 @@ python manage.py runserver
 ## Features
 
 ### 🤖 AI-Powered Workflows
+
 - Conversation Summarization
 - Reply Suggestions
 - Intent Classification
 - Follow-up Generation
 
 ### 📊 Customer Management
+
 - Customer Profiles with interaction history
 - Tag Management
 - Lead Scoring
 - Timeline tracking
 
 ### 🎯 Lead Pipeline
+
 - Kanban Board interface
 - Stage Tracking
 - Progress Monitoring
 
 ### 🔄 Mode-Aware Operation
+
 - **StoreLoop Mode**: Artisan WhatsApp sales
 - **AioTap Mode**: AI consulting workflows
 - Dynamic UI per mode
@@ -85,22 +89,41 @@ OPENAI_API_KEY=your-openai-key
 ## API Endpoints
 
 ### Customer Management
+
 - `GET /crm/customers/` - Customer list with filters
 - `GET /crm/customers/<id>/` - Customer detail with timeline
 - `POST /crm/customers/<id>/interaction/` - Add interaction
 
 ### AI Features
+
 - `POST /crm/customers/<id>/summary/` - Generate AI summary
 - `POST /crm/customers/<id>/reply/` - Get reply suggestion
 
 ### Pipeline Management
+
 - `GET /crm/pipeline/` - Kanban pipeline view
 - `POST /crm/pipeline/move/` - Move lead between stages
+
+## AT Identity Integration
+
+### Prerequisites
+
+1. **AT Identity Service** must be running on `http://localhost:8001`
+2. Set `AT_IDENTITY_URL=http://localhost:8001` in `.env`
+3. Set `APP_NAME=artisan_crm` in `.env`
+
+### Authentication Flow
+
+1. User visits `/crm/login/`
+2. Redirected to AT Identity service at `http://localhost:8001/accounts/login/`
+3. After successful login, AT Identity redirects back with user ID
+4. Middleware fetches user data from AT Identity API
+5. User is authenticated in CRM system
 
 ## Architecture
 
 - **Separate Database**: Uses `artisan_crm` PostgreSQL database
-- **AT Identity Integration**: Custom authentication middleware
+- **AT Identity Integration**: Centralized authentication service
 - **Database Router**: Automatic routing for CRM models
 - **Mode-Specific Features**: StoreLoop vs AioTap workflows
 

@@ -5,6 +5,7 @@
 ### 1. Environment Variables Setup
 
 Copy the example environment file:
+
 ```bash
 cp .env.example .env
 ```
@@ -12,19 +13,21 @@ cp .env.example .env
 Update `.env` with your actual values:
 
 #### Required Configuration
+
 ```bash
 # Database
 DB_PASSWORD=your-actual-password
 SECRET_KEY=your-unique-secret-key
 
 # CRM Database
-CRM_DB_NAME=artisan_crm
+artisan_NAME=artisan
 
 # AI Integration (Optional)
 OPENAI_API_KEY=your-openai-api-key
 ```
 
 #### Mode Configuration
+
 ```bash
 # For StoreLoop (artisan e-commerce)
 CRM_MODE=STORELOOP
@@ -43,18 +46,21 @@ python manage.py runserver 8001
 ### 3. Database Setup
 
 Create CRM database:
+
 ```sql
-CREATE DATABASE artisan_crm;
+CREATE DATABASE artisan;
 ```
 
 Run migrations:
+
 ```bash
-python manage.py migrate --database=crm_db
+python manage.py migrate --database=artisan
 ```
 
 ### 4. Sample Data
 
 Seed with test data:
+
 ```bash
 # StoreLoop mode
 python manage.py seed_crm_data --customers 10
@@ -66,6 +72,7 @@ CRM_MODE=AIO python manage.py seed_crm_data --customers 10
 ### 5. AI Features
 
 Generate AI follow-ups:
+
 ```bash
 python manage.py generate_followups --days 7 --limit 20
 ```
@@ -79,14 +86,14 @@ python manage.py generate_followups --days 7 --limit 20
 
 ## Environment Variables Reference
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `CRM_MODE` | `STORELOOP` | `STORELOOP` or `AIO` |
-| `CRM_DB_NAME` | `artisan_crm` | CRM database name |
-| `OPENAI_API_KEY` | - | OpenAI API key for AI features |
-| `AI_MODEL` | `gpt-3.5-turbo` | AI model to use |
-| `USE_AT_IDENTITY` | `True` | Enable AT Identity integration |
-| `AT_IDENTITY_URL` | `http://localhost:8001/api/` | AT Identity service URL |
+| Variable          | Default                      | Description                    |
+| ----------------- | ---------------------------- | ------------------------------ |
+| `CRM_MODE`        | `STORELOOP`                  | `STORELOOP` or `AIO`           |
+| `artisan_NAME`    | `artisan`                    | CRM database name              |
+| `OPENAI_API_KEY`  | -                            | OpenAI API key for AI features |
+| `AI_MODEL`        | `gpt-3.5-turbo`              | AI model to use                |
+| `USE_AT_IDENTITY` | `True`                       | Enable AT Identity integration |
+| `AT_IDENTITY_URL` | `http://localhost:8001/api/` | AT Identity service URL        |
 
 ## Security Notes
 

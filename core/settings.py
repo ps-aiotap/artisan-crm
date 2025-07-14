@@ -37,8 +37,9 @@ INSTALLED_APPS = [
 ]
 
 
-# Userless configuration
-AT_IDENTITY_URL = 'http://localhost:8001/api/'
+# AT Identity configuration
+AT_IDENTITY_URL = os.environ.get('AT_IDENTITY_URL', 'http://localhost:8001')
+APP_NAME = os.environ.get('APP_NAME', 'artisan')
 
 
 MIDDLEWARE = [
@@ -83,7 +84,7 @@ DATABASES = {
         "HOST": os.environ.get("DB_HOST", "localhost"),
         "PORT": os.environ.get("DB_PORT", "5432"),
     },
-    "crm_db": {
+    "artisan_crm": {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": os.environ.get("CRM_DB_NAME", "artisan_crm"),
         "USER": os.environ.get("DB_USER", "postgres"),
@@ -104,7 +105,7 @@ from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 
 def create_database_if_not_exists():
     # Create both main and CRM databases
-    for db_key in ["default", "crm_db"]:
+    for db_key in ["default", "artisan_crm"]:
         db_config = DATABASES[db_key]
         try:
             conn = psycopg2.connect(
@@ -142,9 +143,9 @@ if "migrate" in sys.argv or "runserver" in sys.argv:
         print(f"Warning: Could not auto-create database: {e}")
 
     # Run core migrations on CRM database if needed
-    if "migrate" in sys.argv and "--database=crm_db" in sys.argv:
+    if "migrate" in sys.argv and "--database=artisan_crm" in sys.argv:
         print(
-            "Note: Run 'python manage.py migrate --database=crm_db' to setup CRM database"
+            "Note: Run 'python manage.py migrate --database=artisan_crm' to setup CRM database"
         )
 
 # Password validation
@@ -208,7 +209,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
 
-APP_NAME = "storeloop"
+
 
 # Allauth settings
 SITE_ID = 1

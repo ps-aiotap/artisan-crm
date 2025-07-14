@@ -20,7 +20,7 @@ class CRMIdentityClient:
         """Sync CRM user to AT Identity"""
         try:
             response = self.session.post(f'{self.base_url}sync/user/', json={
-                'app_name': 'artisan_crm',
+                'app_name': 'artisan',
                 'user_data': {
                     'id': user.id,
                     'username': user.username,
@@ -39,7 +39,7 @@ class CRMIdentityClient:
             response = self.session.get(
                 f'{self.base_url}permissions/',
                 params={
-                    'app_name': 'artisan_crm',
+                    'app_name': 'artisan',
                     'external_user_id': user.id
                 }
             )
@@ -53,7 +53,7 @@ class CRMIdentityClient:
         """Check if user has specific CRM permission"""
         try:
             response = self.session.post(f'{self.base_url}verify-permission/', json={
-                'app_name': 'artisan_crm',
+                'app_name': 'artisan',
                 'external_user_id': user.id,
                 'permission': permission
             })

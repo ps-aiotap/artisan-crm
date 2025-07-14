@@ -16,7 +16,7 @@ class CustomerListView(LoginRequiredMixin, ListView):
     paginate_by = 20
     
     def get_queryset(self):
-        queryset = CustomerProfile.objects.using('crm_db').select_related().prefetch_related('interactions')
+        queryset = CustomerProfile.objects.using('artisan_crm').select_related().prefetch_related('interactions')
         
         # Filter by search
         search = self.request.GET.get('search')
@@ -32,7 +32,7 @@ class CustomerListView(LoginRequiredMixin, ListView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['tags'] = Tag.objects.using('crm_db').all()
+        context['tags'] = Tag.objects.using('artisan_crm').all()
         context['search'] = self.request.GET.get('search', '')
         context['selected_tag'] = self.request.GET.get('tag', '')
         return context
@@ -43,25 +43,25 @@ class CustomerDetailView(LoginRequiredMixin, DetailView):
     context_object_name = 'customer'
     
     def get_object(self):
-        return get_object_or_404(CustomerProfile.objects.using('crm_db'), pk=self.kwargs['pk'])
+        return get_object_or_404(CustomerProfile.objects.using('artisan_crm'), pk=self.kwargs['pk'])
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         customer = self.get_object()
         
         # Get interactions timeline
-        interactions = customer.interactions.using('crm_db').order_by('-created_at')[:20]
+        interactions = customer.interactions.using('artisan_crm').order_by('-created_at')[:20]
         context['interactions'] = interactions
         
         # Get lead info if exists
         try:
-            lead = Lead.objects.using('crm_db').get(customer=customer)
+            lead = Lead.objects.using('artisan_crm').get(customer=customer)
             context['lead'] = lead
         except Lead.DoesNotExist:
             context['lead'] = None
         
         # Get customer tags
-        context['customer_tags'] = [ct.tag for ct in customer.customertag_set.using('crm_db').select_related('tag')]
+        context['customer_tags'] = [ct.tag for ct in customer.customertag_set.using('artisan_crm').select_related('tag')]
         
         return context
 
@@ -71,14 +71,14 @@ def generate_summary(request, customer_id):
     if request.method != 'POST':
         return JsonResponse({'error': 'POST required'}, status=405)
     
-    customer = get_object_or_404(CustomerProfile.objects.using('crm_db'), pk=customer_id)
+    customer = get_object_or_404(CustomerProfile.objects.using('artisan_crm'), pk=customer_id)
     
     # Simple summary for now
     summary = f"Customer: {customer.name}, Source: {customer.source}"
     
     # Update customer summary
     customer.summary = summary
-    customer.save(using='crm_db')
+    customer.save(using='artisan_crm')
     
     return JsonResponse({'summary': summary})
 
@@ -103,9 +103,9 @@ def add_interaction(request, customer_id):
         return JsonResponse({'error': 'POST required'}, status=405)
     
     data = json.loads(request.body)
-    customer = get_object_or_404(CustomerProfile.objects.using('crm_db'), pk=customer_id)
+    customer = get_object_or_404(CustomerProfile.objects.using('artisan_crm'), pk=customer_id)
     
-    interaction = Interaction.objects.using('crm_db').create(
+    interaction = Interaction.objects.using('artisan_crm').create(
         customer=customer,
         channel=data.get('channel', 'internal'),
         direction=data.get('direction', 'outbound'),

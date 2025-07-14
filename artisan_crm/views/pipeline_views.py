@@ -14,12 +14,12 @@ class LeadPipelineView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         
         # Get stages
-        stages = LeadStage.objects.using('crm_db').filter(is_active=True)
+        stages = LeadStage.objects.using('artisan_crm').filter(is_active=True)
         
         # Get leads grouped by stage
         pipeline_data = []
         for stage in stages:
-            leads = Lead.objects.using('crm_db').filter(stage=stage).select_related('customer')
+            leads = Lead.objects.using('artisan_crm').filter(stage=stage).select_related('customer')
             pipeline_data.append({
                 'stage': stage,
                 'leads': leads,
@@ -27,7 +27,7 @@ class LeadPipelineView(LoginRequiredMixin, TemplateView):
             })
         
         context['pipeline_data'] = pipeline_data
-        context['total_leads'] = Lead.objects.using('crm_db').count()
+        context['total_leads'] = Lead.objects.using('artisan_crm').count()
         
         return context
 
@@ -42,11 +42,11 @@ def move_lead(request):
     new_stage_id = data.get('stage_id')
     
     try:
-        lead = Lead.objects.using('crm_db').get(id=lead_id)
-        new_stage = LeadStage.objects.using('crm_db').get(id=new_stage_id)
+        lead = Lead.objects.using('artisan_crm').get(id=lead_id)
+        new_stage = LeadStage.objects.using('artisan_crm').get(id=new_stage_id)
         
         lead.stage = new_stage
-        lead.save(using='crm_db')
+        lead.save(using='artisan_crm')
         
         return JsonResponse({
             'success': True,

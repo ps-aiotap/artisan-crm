@@ -9,7 +9,7 @@ import os
 USE_AT_IDENTITY = os.environ.get('USE_AT_IDENTITY', 'True').lower() == 'true'
 AT_IDENTITY_URL = os.environ.get('AT_IDENTITY_URL', 'http://localhost:8001/api/')
 AT_IDENTITY_API_KEY = os.environ.get('AT_IDENTITY_API_KEY', 'your-api-key')
-APP_NAME = os.environ.get('APP_NAME', 'artisan_crm')
+APP_NAME = os.environ.get('APP_NAME', 'artisan')
 
 # Middleware
 MIDDLEWARE = [
@@ -18,7 +18,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'artisan_crm.middleware.ATIdentityMiddleware',
+    'artisan.middleware.ATIdentityMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
